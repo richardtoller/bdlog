@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#2f5d3a"/>
+  <!-- simple perched bird silhouette, kept inside the maskable safe zone -->
+  <g fill="#f5f3ec">
+    <path d="M150 300c0-70 50-125 120-125 22 0 40 6 54 16l52-12-30 32c8 15 12 32 12 50 0 75-60 125-140 125-30 0-52-6-68-14l-60 22 36-46c-16-14-26-32-26-48z"/>
+    <circle cx="318" cy="222" r="9" fill="#2f5d3a"/>
+  </g>
+  <path d="M200 302c30 22 75 26 115 6" stroke="#2f5d3a" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <rect x="120" y="398" width="272" height="16" rx="8" fill="#c8901a"/>
+  <path d="M232 380v26M262 380v26" stroke="#c8901a" stroke-width="10" stroke-linecap="round"/>
+</svg>
