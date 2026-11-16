@@ -2738,5 +2738,44 @@
 98,
 85
 ]
+},
+{
+"species": "Yellow-legged Gull",
+"source": "File:Goeland leucophee Olbia.jpg",
+"box": [
+28,
+5,
+90,
+65
+],
+"photo": true,
+"artist": "Gzzz",
+"license": "CC BY-SA 3.0"
+},
+{
+"species": "Caspian Gull",
+"source": "File:Caspian gull (Larus cachinnans) summer Danube delta.jpg",
+"box": [
+5,
+15,
+90,
+95
+],
+"photo": true,
+"artist": "Charles J. Sharp",
+"license": "CC BY-SA 4.0"
+},
+{
+"species": "Cory's Shearwater",
+"source": "File:Cory's shearwater (Calonectris borealis).jpg",
+"box": [
+25,
+5,
+80,
+98
+],
+"photo": true,
+"artist": "Hobbyfotowiki",
+"license": "CC0"
 }
 ]
