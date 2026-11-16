@@ -1,6 +1,6 @@
 // Offline support: cache the app shell, serve cache-first, refresh in the background.
 // Bird pictures go in their own cache so app updates don't throw them away.
-const CACHE = 'bdlog-v2';
+const CACHE = 'bdlog-v3';
 const IMG_CACHE = 'bdlog-img-v1';
 const ASSETS = [
   './', 'index.html', 'styles.css', 'manifest.webmanifest',
