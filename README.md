@@ -74,30 +74,3 @@ python3 tools/build_images.py   # downloads the source paintings into tools/.cac
 ```
 
 Then bump `CACHE` in `sw.js`. If you replace an existing picture, also bump `IMG_CACHE`.
-
----
-
-# Scores 🎼
-
-A second app in this repository, in the `scores/` folder: a phone app for viewing and organising sheet music and building concert programmes. Like Bird Log it's an installable web app (PWA): no account, no app store, works offline, and your scores stay on your phone.
-
-Once GitHub Pages is set up (see above) it's at `https://<your-username>.github.io/bdlog/scores/`. Open that in Chrome on your phone and choose ⋮ › **Install app**.
-
-## Features
-
-- **Import your folder**: on the Songs tab (or Library), tap **Choose the _BFS folder** and pick *Internal shared storage › songs › _BFS*. PDFs and PNG/JPEG/WebP pictures are copied into the app's storage. Tap **Update from the _BFS folder** after adding or changing scores: new files are added, changed ones updated, and your titles, categories and programmes are kept. If your phone only offers a file picker, open the folder and use ⋮ › **Select all**.
-- **Categories**: songs start out as *Christmas* or *Non-Christmas*, guessed from the file name (Silent Night, Jingle Bells, carols, etc.). Fix any song with ⋯, or tap **Select** to change many at once. Filter the list with the category chips, or search by title. Add, rename or delete categories in Library.
-- **Viewer**: tap a title to open the score full screen. Pinch or double-tap to zoom (up to 500%, re-drawn sharp at every zoom level) and drag to pan. Tap the right or left edge to go forward or back a screen, or tap the middle to show the controls. ↕/↔ switches between fit-to-width and whole-page view. Works in portrait and landscape, keeps the screen awake, and works with Bluetooth page-turner pedals (arrow and Page Up/Down keys).
-- **Concert programmes**: create a programme (name, date, venue, notes), tap **+ Songs** and tap songs in performance order. **Edit** lets you drag to reorder, remove songs and add notes such as “Interval”. **▶ Start** steps through the whole concert: when you turn past the end of one score the next one opens, with prev/next buttons too. Share or copy the song list, or duplicate a programme for next year.
-- **Backup**: Library › Download backup saves programmes, categories and titles (not the score files). Restore on a new phone, then import the folder again.
-
-## Files
-
-| File | Purpose |
-| --- | --- |
-| `scores/index.html`, `scores/styles.css` | App shell and styles (light and dark mode) |
-| `scores/js/app.js` | Songs, categories, programmes, importing, backup |
-| `scores/js/viewer.js` | Full-screen viewer: zoom, page turning, programme navigation |
-| `scores/js/db.js` | IndexedDB storage for the score files and app data |
-| `scores/vendor/pdfjs/` | [PDF.js](https://mozilla.github.io/pdf.js/) 4.10.38 (Apache 2.0), stored here so it works offline |
-| `scores/sw.js` | Service worker for offline use. Bump `CACHE` after changing any file |
