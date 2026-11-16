@@ -47,7 +47,7 @@
     const src = IMAGE_SOURCES[im[1]];
     const page = 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(src.title.replace(/ /g, '_'));
     return `<figure class="plate"><img src="${imgSrc(name)}" alt="Painting of ${esc(name)}" width="${im[2]}" height="${im[3]}" decoding="async">
-      <figcaption>${esc(src.artist)} · public domain · <a href="${page}" target="_blank" rel="noopener">source</a></figcaption></figure>`;
+      <figcaption>${src.photo ? 'Photo: ' : ''}${esc(src.artist)} · ${esc(src.license || 'Public domain')} · <a href="${page}" target="_blank" rel="noopener">source</a></figcaption></figure>`;
   }
   const currentTrip = () => state.trips.find(t => t.id === state.current) || null;
   const fmtTime = iso => {
@@ -444,7 +444,7 @@
         </div>
       </div>
       <p class="muted small" style="text-align:center">Bird Log · ${BIRDS.length} UK species · works offline</p>
-      <p class="muted small" style="text-align:center">Illustrations: public-domain paintings, mainly by Archibald Thorburn (<i>British Birds</i>, 1915–18), with a few by J. G. Keulemans, M. A. Koekkoek and others, via Wikimedia Commons.</p>`;
+      <p class="muted small" style="text-align:center">Illustrations: public-domain paintings, mainly by Archibald Thorburn (<i>British Birds</i>, 1915–18), with a few by J. G. Keulemans, M. A. Koekkoek and others, via Wikimedia Commons. Where no painting exists, a photo is used. Its photographer and licence are shown on the species card.</p>`;
   }
 
   function tripForm(id) {
