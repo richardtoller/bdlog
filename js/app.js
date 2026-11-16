@@ -34,6 +34,21 @@
   const BY_NAME = new Map(BIRDS.map(b => [b.name, b]));
   const statusText = b => b.status.map(c => STATUS_LABELS[c]).filter(Boolean).join(' · ');
   const isScarce = b => b.status.includes('X');
+  const IMGS = typeof BIRD_IMAGES !== 'undefined' ? BIRD_IMAGES : {};
+  const imgSrc = name => IMGS[name] ? 'img/birds/' + IMGS[name][0] : null;
+  function thumb(name, cls = 'thumb') {
+    const src = imgSrc(name);
+    return src ? `<img class="${cls}" src="${src}" alt="" loading="lazy" decoding="async">`
+      : `<span class="${cls} noimg" aria-hidden="true"></span>`;
+  }
+  function figure(name) {
+    const im = IMGS[name];
+    if (!im) return '';
+    const src = IMAGE_SOURCES[im[1]];
+    const page = 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(src.title.replace(/ /g, '_'));
+    return `<figure class="plate"><img src="${imgSrc(name)}" alt="Painting of ${esc(name)}" width="${im[2]}" height="${im[3]}" decoding="async">
+      <figcaption>${esc(src.artist)} · public domain · <a href="${page}" target="_blank" rel="noopener">source</a></figcaption></figure>`;
+  }
   const currentTrip = () => state.trips.find(t => t.id === state.current) || null;
   const fmtTime = iso => {
     if (!iso) return '';
@@ -231,6 +246,7 @@
   function sightingRow(s, n) {
     return `<div class="item ${s.custom ? 'custom' : ''}">
       <span class="num">${n}</span>
+      ${thumb(s.name, 'thumb sm')}
       <div class="main" data-act="sighting" data-name="${esc(s.name)}" role="button" tabindex="0">
         <div class="name">${s.star ? '<span class="star">★</span> ' : ''}${esc(s.name)}${s.heard ? '<span class="flag">(heard)</span>' : ''}</div>
         <div class="sci">${esc(s.notes ? s.notes : (s.sci || (s.custom ? 'Custom species' : '')))}</div>
@@ -253,7 +269,7 @@
     box.innerHTML = res.map(b => {
       const s = onTrip(b.name);
       return `<button class="item" data-act="add" data-name="${esc(b.name)}">
-        <div class="main"><div class="name">${highlight(b.name, q)}</div>
+        ${thumb(b.name)}<div class="main"><div class="name">${highlight(b.name, q)}</div>
         <div class="sci">${esc(b.sci)}${isScarce(b) ? ' · scarce' : ''}</div></div>
         ${s ? `<span class="badge green">✓ ${s.count}</span>` : ''}<span class="add-ico">+</span>
       </button>`;
@@ -267,6 +283,7 @@
     const s = trip.sightings.find(x => x.name === name); if (!s) return;
     const b = BY_NAME.get(s.name);
     openSheet(`
+      ${figure(s.name)}
       <h2>${esc(s.name)}</h2>
       <div class="sci">${esc(s.sci || 'Custom species')}</div>
       <div class="stack" style="margin-top:14px" data-sighting="${esc(s.name)}">
@@ -317,7 +334,7 @@
       <div class="list">${list.map(b => {
         const s = onTrip(b.name);
         return `<button class="item" data-act="species" data-name="${esc(b.name)}">
-          <div class="main"><div class="name">${ui.speciesQ ? highlight(b.name, ui.speciesQ) : esc(b.name)}</div>
+          ${thumb(b.name)}<div class="main"><div class="name">${ui.speciesQ ? highlight(b.name, ui.speciesQ) : esc(b.name)}</div>
           <div class="sci">${esc(b.sci)}</div></div>
           ${isScarce(b) ? '<span class="badge">scarce</span>' : ''}
           ${s ? '<span class="check" aria-label="On trip">✓</span>' : ''}
@@ -331,6 +348,7 @@
     const trip = currentTrip();
     const guides = GUIDES.filter(g => g.species.includes(b.name));
     openSheet(`
+      ${figure(b.name)}
       <h2>${esc(b.name)}</h2>
       <div class="sci">${esc(b.sci)}</div>
       <div class="row wrap" style="margin:10px 0">
@@ -353,13 +371,16 @@
   function guideBody(g) {
     return `
       <p>${esc(g.intro)}</p>
-      ${g.points.map(([who, txt]) => `<div class="cmp"><button class="linkish who" data-act="species" data-name="${esc(who)}">${esc(who)}</button><div>${esc(txt)}</div></div>`).join('')}
+      ${g.points.map(([who, txt]) => `<div class="cmp pic">
+        <button class="cmp-img" data-act="species" data-name="${esc(who)}" aria-label="${esc(who)} species card">${thumb(who, 'gimg')}</button>
+        <div><button class="linkish who" data-act="species" data-name="${esc(who)}">${esc(who)}</button><div>${esc(txt)}</div></div>
+      </div>`).join('')}
       ${g.tip ? `<div class="tip">💡 ${esc(g.tip)}</div>` : ''}`;
   }
   function renderGuides() {
     setTop('ID Guides');
     $('#view').innerHTML = `
-      <p class="muted small">Side-by-side comparisons of commonly confused UK birds. Tap a species name for its full card.</p>
+      <p class="muted small">Side-by-side comparisons of commonly confused UK birds. Tap a picture or name for the full species card.</p>
       <details class="guide">
         <summary>🧭 Fieldcraft: how to identify a bird</summary>
         <div class="body">${FIELDCRAFT.map(([h, t]) => `<div class="cmp"><div class="who">${esc(h)}</div><div>${esc(t)}</div></div>`).join('')}</div>
@@ -409,6 +430,11 @@
         <label class="check"><input type="checkbox" id="set-gps" ${state.settings.gps ? 'checked' : ''}> Record GPS position with each new species</label>
         <p class="muted small" style="margin:0">Coordinates go into CSV exports and the sighting details. They are never added to blog exports.</p>
       </div>
+      <div class="card">
+        <b>Bird pictures</b>
+        <p class="muted small" style="margin:4px 0 10px">Pictures are saved as you view them. To have all ${Object.keys(IMGS).length} available offline (about 7 MB), download them now while you have Wi-Fi.</p>
+        <button class="btn" data-act="cache-images">🖼️ Download all pictures</button>
+      </div>
       <h3>Backup</h3>
       <div class="card">
         <p class="muted small" style="margin-top:0">Your data is stored only on this device. Make a backup now and then, or to move your data to a new phone.</p>
@@ -417,7 +443,8 @@
           <label class="btn">⬆️ Restore<input type="file" id="restore" accept="application/json,.json" hidden></label>
         </div>
       </div>
-      <p class="muted small" style="text-align:center">Bird Log · ${BIRDS.length} UK species · works offline</p>`;
+      <p class="muted small" style="text-align:center">Bird Log · ${BIRDS.length} UK species · works offline</p>
+      <p class="muted small" style="text-align:center">Illustrations: public-domain paintings, mainly by Archibald Thorburn (<i>British Birds</i>, 1915–18), with a few by J. G. Keulemans, M. A. Koekkoek and others, via Wikimedia Commons.</p>`;
   }
 
   function tripForm(id) {
@@ -548,6 +575,27 @@
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
 
+  async function cacheAllImages(btn) {
+    if (!('caches' in window)) { toast('This browser cannot store pictures offline'); return; }
+    const urls = Object.keys(IMGS).map(imgSrc);
+    btn.disabled = true;
+    try {
+      const cache = await caches.open('bdlog-img-v1');
+      const have = new Set((await cache.keys()).map(r => new URL(r.url).pathname.split('/').pop()));
+      const todo = urls.filter(u => !have.has(u.split('/').pop()));
+      let done = urls.length - todo.length, failed = 0;
+      for (let i = 0; i < todo.length; i += 6) {
+        await Promise.all(todo.slice(i, i + 6).map(u => cache.add(u).then(() => done++, () => failed++)));
+        btn.textContent = `Downloading… ${done}/${urls.length}`;
+      }
+      btn.textContent = failed ? `⚠️ ${failed} failed. Tap to retry.` : `✓ All ${urls.length} pictures saved`;
+      if (failed) btn.disabled = false;
+    } catch (e) {
+      btn.disabled = false; btn.textContent = '🖼️ Download all pictures';
+      toast('Download failed. Check your connection.');
+    }
+  }
+
   // ---------- Events ----------
   document.addEventListener('click', e => {
     const go = e.target.closest('[data-tab-go]');
@@ -608,6 +656,7 @@
       case 'copy-export': copyExport(); break;
       case 'share-export': shareExport(); break;
       case 'download-export': download(exportOutput(), exportFilename(), Exporter.MIME[state.settings.export.format]); break;
+      case 'cache-images': cacheAllImages(el); break;
       case 'backup':
         download(JSON.stringify({ app: 'bdlog', version: 1, exported: new Date().toISOString(), ...state }, null, 2),
           `bird-log-backup-${todayISO()}.json`, 'application/json');

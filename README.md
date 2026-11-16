@@ -17,6 +17,7 @@ It's an installable web app (PWA). It runs in your phone's browser, can be added
 - **Per-sighting details**: count, *heard only*, ★ trip highlight, notes, time first logged and optional GPS position.
 - **Custom species**: log anything not on the built-in list, such as a rarity or escape.
 - **Species browser**: 277 UK species in field-guide (taxonomic) order. Filter by group and hide scarce species. Each species card has a short ID description, status (resident, summer visitor, etc.), alternative names and a Wikipedia link.
+- **Bird pictures**: 274 species have a painting on their species card, in search results and lists, and beside each bird in the ID guides. They are public-domain paintings, mostly by Archibald Thorburn from *British Birds* (1915–18), with a few by J. G. Keulemans, M. A. Koekkoek and others, all from Wikimedia Commons. Pictures are saved for offline use as you view them, or all at once (about 7 MB) from **Trips → Download all pictures**. Commons has no painting of Yellow-legged Gull, Caspian Gull or Cory's Shearwater, so those three have no picture.
 - **ID guides**: a fieldcraft primer plus 20 side-by-side "tricky pairs" guides, such as Chiffchaff vs Willow Warbler, Marsh vs Willow Tit, Common vs Arctic Tern and the large gulls. Species cards link to the guides that cover them.
 - **Blog export**:
   - formats: **HTML** (WordPress, Blogger, Squarespace, Wix), **Markdown** (Ghost, Jekyll, Hugo, Substack), plain text or **CSV**
@@ -54,6 +55,7 @@ python3 -m http.server 8000
 | `index.html` | App shell |
 | `styles.css` | Styles (light and dark mode) |
 | `js/birds.js` | UK species list: name, scientific name, group, status, aliases and ID notes, one line per species |
+| `js/images.js`, `img/birds/` | Bird pictures and their sources (generated, see below) |
 | `js/guides.js` | Fieldcraft tips and the "tricky pairs" ID guides |
 | `js/export.js` | Builds the HTML, Markdown, text and CSV exports |
 | `js/app.js` | UI, search, storage, trips and sightings |
@@ -61,3 +63,14 @@ python3 -m http.server 8000
 | `manifest.webmanifest`, `icons/` | Installable-app metadata and icons |
 
 To add or change a species, edit its line in `js/birds.js`. The format is documented at the top of the file. If you change any files, bump `CACHE` in `sw.js` so installed copies pick up the update.
+
+### Bird pictures
+
+`tools/build_images.py` builds `img/birds/*.webp` and `js/images.js` from `tools/bird-image-crops.json`. That file lists each species' source painting on Wikimedia Commons and a crop box in percent: `[left, top, right, bottom]`. To fix a crop or swap a painting, edit that file and run:
+
+```sh
+pip install pillow
+python3 tools/build_images.py   # downloads the source paintings into tools/.cache on the first run
+```
+
+Then bump `CACHE` in `sw.js`. If you replace an existing picture, also bump `IMG_CACHE`.
